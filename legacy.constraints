@@ -7,4 +7,4 @@ pluggy==0.5.2
 
 # For compatibility with old pluggy
 pytest<3.7
-pytest-cov<2
+pytest-cov==1.8.1
