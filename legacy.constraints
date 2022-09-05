@@ -3,4 +3,4 @@
 # ensure pubtools-content-gateway works with those.
 PyYAML < 5.1
 jsonschema==2.3.0
-attrs==19.1.0
+attrs
