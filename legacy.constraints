@@ -5,6 +5,3 @@ PyYAML < 5.1
 jsonschema==2.3.0
 pluggy==0.5.2
 
-# For compatibility with old pluggy
-pytest<3.7
-pytest-cov<2
