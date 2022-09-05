@@ -4,4 +4,3 @@ six
 urllib3
 requests
 setuptools
-attrs==20.2.0
