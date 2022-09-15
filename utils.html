@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview &mdash; pubtools-content-gateway 0.1 documentation</title>
+  <title>Utils Module &mdash; pubtools-content-gateway 0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -17,9 +17,7 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Entrypoints reference" href="entrypoints_reference.html" />
-    <link rel="prev" title="Welcome to pubtools-content-gateway’s documentation!" href="index.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -37,13 +35,8 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#details">Details</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a></li>
-</ul>
-</li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="entrypoints_reference.html">Entrypoints reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cgw_client.html">CGW Client Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="push_base.html">Push Base Module</a></li>
@@ -67,9 +60,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Overview</li>
+      <li>Utils Module</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/release-engineering/pubtools-content-gateway/blob/main/docs/README.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/release-engineering/pubtools-content-gateway/blob/main/docs/utils.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -77,42 +70,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h1>
-<p>Set of scripts used for operating with the Content Gateway (CGW) service</p>
-<div class="section" id="details">
-<h2>Details<a class="headerlink" href="#details" title="Permalink to this heading"></a></h2>
-<p>content-gateway is a library used for performing various content workflows related work. The library is utilized by Red Hat’s internal tooling or release engineers for pushing and managing the contents of products, versions and files on the content gateway server.</p>
-<p>Some scripts support a CLI invocation and may be utilized by end-users directly. These are mostly content management operations and are expected to be performed ad-hoc and on a need-to basis. Other scripts can only be invoked programmatically from a different Python code. These are generally a part of standard content workflows and are expected to be invoked by internal Red Hat tooling.</p>
-<p>The internal service which utilizes this library is called <a class="reference external" href="https://pub.devel.redhat.com/pub/docs/usage.html">rcm-pub</a> (hence pubtools in the name).</p>
-</div>
-<hr class="docutils" />
-<div class="section" id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p>Python 2.6+</p></li>
-<li><p>Python 3.5+</p></li>
-</ul>
-</div>
-<hr class="docutils" />
-<div class="section" id="setup">
-<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this heading"></a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -r requirements.txt
-$ pip install .
-or
-$ python setup.py install
-</pre></div>
-</div>
-</div>
+  <div class="section" id="utils-module">
+<h1>Utils Module<a class="headerlink" href="#utils-module" title="Permalink to this heading"></a></h1>
 </div>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to pubtools-content-gateway’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="entrypoints_reference.html" class="btn btn-neutral float-right" title="Entrypoints reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

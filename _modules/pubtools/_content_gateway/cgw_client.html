@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pubtools._content_gateway.cgw_client &mdash; pubtools-content-gateway 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> pubtools-content-gateway
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints_reference.html">Entrypoints reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cgw_client.html">CGW Client Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../push_base.html">Push Base Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../push_cgw.html">Push CGW Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../push_staged_cgw.html">Push Staged CGW Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_content_gateway.html">Content Gateway package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">ChangeLog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pubtools-content-gateway</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>pubtools._content_gateway.cgw_client</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pubtools._content_gateway.cgw_client</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">.cgw_session</span> <span class="kn">import</span> <span class="n">CGWSession</span>
+
+
+<div class="viewcode-block" id="CGWClientError"><a class="viewcode-back" href="../../../_content_gateway.html#pubtools._content_gateway.cgw_client.CGWClientError">[docs]</a><span class="k">class</span> <span class="nc">CGWClientError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom exception class to handle Content Gateway Client errors&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="CGWClient"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient">[docs]</a><span class="k">class</span> <span class="nc">CGWClient</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for performing content gateway HTTP API operations.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">cgw_auth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hostname (str):</span>
+<span class="sd">                CGW host URL.</span>
+<span class="sd">            cgw_auth (CGWBasicAuth):</span>
+<span class="sd">                CGWBasicAuth subclass instance</span>
+<span class="sd">            verify (bool)</span>
+<span class="sd">                enable/disable SSL verification</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span>
+        <span class="c1"># Check if CGW hostname is present</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CGWClientError</span><span class="p">(</span><span class="s2">&quot;No content gateway hostname found&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgw_session</span> <span class="o">=</span> <span class="n">CGWSession</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="n">verify</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cgw_auth</span><span class="p">:</span>
+            <span class="n">cgw_auth</span><span class="o">.</span><span class="n">make_auth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cgw_session</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CGWClient.call_cgw_api"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.call_cgw_api">[docs]</a>    <span class="k">def</span> <span class="nf">call_cgw_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform an HTTP API request on content gateway registry.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str):</span>
+<span class="sd">                REST API method of the request (GET, POST, PUT, DELETE).</span>
+<span class="sd">            endpoint (str):</span>
+<span class="sd">                Endpoint of the request.</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                Optional arguments for the method Request object.</span>
+
+<span class="sd">        Returns (list|dict|int):</span>
+<span class="sd">            Returns either list or dict response for GET method</span>
+<span class="sd">            and int for PUT methods.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            CGWClientError: When the request returns an error status.</span>
+<span class="sd">            Exception: Occurs if API call fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Check if correct method id passed</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="s2">&quot;DELETE&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">CGWClientError</span><span class="p">(</span><span class="s2">&quot;Wrong request method passed&quot;</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;GET&quot;</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgw_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgw_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;PUT&quot;</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgw_session</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;DELETE&quot;</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgw_session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Error: Exception occurred during API call: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">CGWClientError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CGWClientError</span><span class="p">(</span>
+                <span class="s2">&quot;content gateway API returned error: &quot;</span>
+                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">status_code: </span><span class="si">%s</span><span class="s2">, reason: </span><span class="si">%s</span><span class="s2">, error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">reason</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_products"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_products">[docs]</a>    <span class="k">def</span> <span class="nf">get_products</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of all products.</span>
+
+<span class="sd">        Returns (list[dict]):</span>
+<span class="sd">            Returns list of products.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;/products&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_product"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_product">[docs]</a>    <span class="k">def</span> <span class="nf">get_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get one product record specified by its identifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of requested product</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns the requested product.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pid</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.create_product"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.create_product">[docs]</a>    <span class="k">def</span> <span class="nf">create_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new product record on the content gateway.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                product data to be created</span>
+
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Returns the created product id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/&quot;</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.update_product"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.update_product">[docs]</a>    <span class="k">def</span> <span class="nf">update_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates an existing product record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                product data to be updated</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful product update.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products&quot;</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.delete_product"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.delete_product">[docs]</a>    <span class="k">def</span> <span class="nf">delete_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attempts to delete an existing product record.</span>
+<span class="sd">        It is not possible to delete products,</span>
+<span class="sd">        that has any product versions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the record that need to be deleted</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful product delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pid</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;DELETE&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_versions"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_versions">[docs]</a>    <span class="k">def</span> <span class="nf">get_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of versions belonging to the specific product.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the version</span>
+
+<span class="sd">        Returns (list[dict]):</span>
+<span class="sd">            Returns a list of a specific product versions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions&quot;</span> <span class="o">%</span> <span class="n">pid</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_version"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get one product version record specified by its identifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the version</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                requested version id</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">           A single version record.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.create_version"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.create_version">[docs]</a>    <span class="k">def</span> <span class="nf">create_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new product version record on the content gateway.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id for which version needs to be created</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                version data to be created</span>
+
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Returns the created version id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/&quot;</span> <span class="o">%</span> <span class="n">pid</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.update_version"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.update_version">[docs]</a>    <span class="k">def</span> <span class="nf">update_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates an existing version record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the version</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                version data to be updated</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful version update.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions&quot;</span> <span class="o">%</span> <span class="n">pid</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.delete_version"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.delete_version">[docs]</a>    <span class="k">def</span> <span class="nf">delete_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attempts to delete an existing version record.</span>
+<span class="sd">        It is not possible to delete a version,</span>
+<span class="sd">        that has any file records.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the version</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the record that need to be deleted</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful version delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;DELETE&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_all_files"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_all_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of all files, links and internal links of the specific version.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the file</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the file</span>
+
+<span class="sd">        Returns (list[dict]):</span>
+<span class="sd">            Returns a list of a specific product version files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/all&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_files"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of files belonging to the specific product version.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the file</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the file</span>
+
+<span class="sd">        Returns (list[dict]):</span>
+<span class="sd">            Returns a list of a specific product version files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/files&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_file"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_file">[docs]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">fid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a single file specified by its identifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the file</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the file</span>
+<span class="sd">            fid (int):</span>
+<span class="sd">                requested file id</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">           A single file record.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/files/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">fid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.create_file"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.create_file">[docs]</a>    <span class="k">def</span> <span class="nf">create_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new file record on the content gateway.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the file</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id for which file needs to be created</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                file data to be created</span>
+
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Returns the created file id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/files&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.update_file"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.update_file">[docs]</a>    <span class="k">def</span> <span class="nf">update_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates an existing file record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the file</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id for which file needs to be updated</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                file data to be updated</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful file update.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/files&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.delete_file"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.delete_file">[docs]</a>    <span class="k">def</span> <span class="nf">delete_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">fid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attempts to delete an existing file record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the file</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the file</span>
+<span class="sd">            fid (int):</span>
+<span class="sd">                file id of the record that need to be deleted</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful file delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/files/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">fid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;DELETE&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_urls"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_urls">[docs]</a>    <span class="k">def</span> <span class="nf">get_urls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of urls belonging to the specific product version.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the url</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the url</span>
+
+<span class="sd">        Returns (list[dict]):</span>
+<span class="sd">            Returns a list of a specific product version urls</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/urls&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_url"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">uid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a single url specified by its identifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the url</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the url</span>
+<span class="sd">            uid (int):</span>
+<span class="sd">                requested url id</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">           A single url record.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/urls/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">uid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.create_url"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.create_url">[docs]</a>    <span class="k">def</span> <span class="nf">create_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new url record on the content gateway.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the url</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id for which url needs to be created</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                url data to be created</span>
+
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Returns the created url id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/urls/&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.update_url"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.update_url">[docs]</a>    <span class="k">def</span> <span class="nf">update_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates an existing url record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the url</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id for which url needs to be updated</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                url data to be updated</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful url update.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/urls&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.delete_url"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.delete_url">[docs]</a>    <span class="k">def</span> <span class="nf">delete_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">uid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attempts to delete an existing url record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the version</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the url</span>
+<span class="sd">            uid (int):</span>
+<span class="sd">                url id of the record that need to be deleted</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful url delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/urls/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">uid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;DELETE&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_internals"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_internals">[docs]</a>    <span class="k">def</span> <span class="nf">get_internals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of internals belonging to the specific product version.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the internals</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the internals</span>
+
+<span class="sd">        Returns (list[dict]):</span>
+<span class="sd">            Returns a list of a specific product version internals</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/internals&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.get_internal"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.get_internal">[docs]</a>    <span class="k">def</span> <span class="nf">get_internal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">iid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a single internal specified by its identifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the internal</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the internal</span>
+<span class="sd">            iid (int):</span>
+<span class="sd">                requested internal id</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">           A single internal record.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/internals/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">iid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.create_internal"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.create_internal">[docs]</a>    <span class="k">def</span> <span class="nf">create_internal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new internal record on the content gateway.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the internal</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id for which internal needs to be created</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                internal data to be created</span>
+
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Returns the created internal id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/internals/&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.update_internal"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.update_internal">[docs]</a>    <span class="k">def</span> <span class="nf">update_internal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates an existing internal record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the internal</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id for which internal needs to be updated</span>
+<span class="sd">            data (dict):</span>
+<span class="sd">                internal data to be updated</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful internal update.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/internals/&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div>
+
+<div class="viewcode-block" id="CGWClient.delete_internal"><a class="viewcode-back" href="../../../cgw_client.html#pubtools._content_gateway.cgw_client.CGWClient.delete_internal">[docs]</a>    <span class="k">def</span> <span class="nf">delete_internal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">iid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attempts to delete an existing internal record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pid (int):</span>
+<span class="sd">                product id of the internal</span>
+<span class="sd">            vid (int):</span>
+<span class="sd">                version id of the internal</span>
+<span class="sd">            iid (int):</span>
+<span class="sd">                url id of the record that need to be deleted</span>
+
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Returns empty dict on successful internal delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="s2">&quot;/products/</span><span class="si">%s</span><span class="s2">/versions/</span><span class="si">%s</span><span class="s2">/internals/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">iid</span><span class="p">)</span>
+        <span class="n">resp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_cgw_api</span><span class="p">(</span><span class="s2">&quot;DELETE&quot;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp_data</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Red Hat.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
