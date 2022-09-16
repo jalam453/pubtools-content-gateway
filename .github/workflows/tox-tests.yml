@@ -1,6 +1,4 @@
 name: Tox tests
-env:
-  CODECOV_VERSION: 'v0.1.15'
 
 on: [push, pull_request]
 
@@ -105,6 +103,5 @@ jobs:
         uses: codecov/codecov-action@v2.1.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          version: ${{ env.CODECOV_VERSION }}
           fail_ci_if_error: true
           verbose: true
