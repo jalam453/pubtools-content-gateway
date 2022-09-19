@@ -82,7 +82,6 @@
 <h2>Content Gateway REST API Services<a class="headerlink" href="#content-gateway-rest-api-services" title="Permalink to this heading"></a></h2>
 <p>In order to optimize the deployment of new files REST user interface was added to manipulate the products from a command line. All those endpoints require basic authentication and only accounts with permission to see the content in DM can use GET requests and only users with edit permissions can use DELETE, PUSH or POST endpoints. If you need either of these permissions send a request to <a class="reference external" href="mailto:help&#37;&#52;&#48;jboss&#46;org">help<span>&#64;</span>jboss<span>&#46;</span>org</a>.</p>
 <p>Return values 401 (for invalid credentials) and 403 (valid credentials but lack of permissions) are returned by all the functions listed here. Requests, that do changes lock the whole product for all users but you. In case you are trying to modify a product locked by someone else, you get 409 return value.</p>
-<p>You can request application/json or application/xml data (Accept header). If passing an object to be saved or edited, do not forget to use Content-Type header (can be application/json or appliction/xml). You can ignore modifiedBy, created and updated fields. They are created/updated automatically.</p>
 </div>
 <hr class="docutils" />
 <div class="section" id="cgw-client-module-reference">
