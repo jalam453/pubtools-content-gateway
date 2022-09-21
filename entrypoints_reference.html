@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="CGW Client Module" href="cgw_client.html" />
+    <link rel="next" title="Push Base Module" href="push_base.html" />
     <link rel="prev" title="Overview" href="README.html" /> 
 </head>
 
@@ -42,7 +42,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Entrypoints reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#cgw-environment">CGW environment</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#yaml-file-formats">YAML file formats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-file-entities-formats">YAML file entities formats</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#product">Product</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#version">Version</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#file">File</a></li>
@@ -51,12 +51,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#push-staged-cgw">push-staged-cgw</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">YAML file formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-file-formats">YAML file formats</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cgw_client.html">CGW Client Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="push_base.html">Push Base Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="push_cgw.html">Push CGW Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="push_staged_cgw.html">Push Staged CGW Module</a></li>
@@ -138,11 +137,10 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="yaml-file-formats">
-<h3>YAML file formats<a class="headerlink" href="#yaml-file-formats" title="Permalink to this heading"></a></h3>
+<div class="section" id="yaml-file-entities-formats">
+<h3>YAML file entities formats<a class="headerlink" href="#yaml-file-entities-formats" title="Permalink to this heading"></a></h3>
 <p>One can Add, Update and Delete the contents from CGW.
-The YAML file can consist details of Products, Versions and Files.</p>
-<p>The user can pass a single or multiple records of product, version and file in a single YAML file.</p>
+The YAML file can consist list of Products, Versions and Files</p>
 <div class="section" id="product">
 <h4>Product<a class="headerlink" href="#product" title="Permalink to this heading"></a></h4>
 <p>The highest in the hierarchy is a product. It contains significant details like <cite>name</cite>, <cite>code</cite>, <cite>downloadpage</cite> etc. (see below in YAML format)</p>
@@ -209,11 +207,11 @@ The YAML file can consist details of Products, Versions and Files.</p>
 </div>
 <div class="section" id="push-staged-cgw">
 <h2>push-staged-cgw<a class="headerlink" href="#push-staged-cgw" title="Permalink to this heading"></a></h2>
-<p>The push-staged-cgw (<a class="reference internal" href="push_staged_cgw.html"><span class="doc">Push Staged CGW Module</span></a>) is a target entrypoint for Push Staged which will be invoked through Red Hat’s internal service called <a class="reference external" href="https://pub.devel.redhat.com/pub/docs/usage.html">rcm-pub</a>.</p>
+<p>The push-staged-cgw (<a class="reference internal" href="push_staged_cgw.html"><span class="doc">Push Staged CGW Module</span></a>) is a target entrypoint for Push Staged which will be invoked through Red Hat’s internal service called <cite>rcm-pub</cite>.</p>
 <p>All the user credentials will be received through the argument <code class="docutils literal notranslate"><span class="pre">target_settings</span></code> consisting of <cite>server_name</cite>, <cite>username</cite> and <cite>password</cite>.
 It shares the same YAML file structure except <cite>downloadURL</cite> user need to pass <cite>pushItemPath</cite>.</p>
-<div class="section" id="id1">
-<h3>YAML file formats<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<div class="section" id="yaml-file-formats">
+<h3>YAML file formats<a class="headerlink" href="#yaml-file-formats" title="Permalink to this heading"></a></h3>
 <p>The user can pass a single or multiple records of product, version and file in a single YAML file.
 A typical YAML format for Product, version and file looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># YAML file formats for File</span>
@@ -244,7 +242,7 @@ A typical YAML format for Product, version and file looks like this:</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="README.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cgw_client.html" class="btn btn-neutral float-right" title="CGW Client Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="push_base.html" class="btn btn-neutral float-right" title="Push Base Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
