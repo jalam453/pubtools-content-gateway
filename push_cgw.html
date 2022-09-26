@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -44,10 +45,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Push CGW Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#cgw-environment">CGW environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#yaml-file-formats">YAML file formats</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">YAML file formats</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#yaml-file-formats">YAML file formats</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="push_staged_cgw.html">Push Staged CGW Module</a></li>
@@ -127,59 +125,7 @@
 <div class="section" id="yaml-file-formats">
 <h2>YAML file formats<a class="headerlink" href="#yaml-file-formats" title="Permalink to this heading"></a></h2>
 <p>One can Add, Update and Delete the contents from CGW
-The YAML file can consist details of Products, Versions and Files.</p>
-<div class="section" id="id1">
-<h3>YAML file formats<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
-<p>The user can pass a single or multiple records of product, version and file in a single YAML file.
-A typical YAML format for Product, version and file looks like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># YAML file formats for Product</span>
-<span class="o">-</span> <span class="nb">type</span><span class="p">:</span> <span class="n">product</span>                                             <span class="c1"># MANDATORY</span>
-  <span class="n">state</span><span class="p">:</span> <span class="n">create</span>                                             <span class="c1"># MANDATORY</span>
-  <span class="n">metadata</span><span class="p">:</span>
-    <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;Test Product&quot;</span>                                    <span class="c1"># MANDATORY</span>
-    <span class="n">productCode</span><span class="p">:</span> <span class="s2">&quot;TestProduct&quot;</span>                              <span class="c1"># MANDATORY</span>
-    <span class="n">homepage</span><span class="p">:</span> <span class="s2">&quot;https://test.com/&quot;</span>                           <span class="c1"># OPTIONAL</span>
-    <span class="n">downloadpage</span><span class="p">:</span> <span class="s2">&quot;https://test.com/&quot;</span>                       <span class="c1"># OPTIONAL</span>
-    <span class="n">thankYouPage</span><span class="p">:</span> <span class="s2">&quot;https://test.com/&quot;</span>                       <span class="c1"># OPTIONAL</span>
-    <span class="n">eloquaCode</span><span class="p">:</span> <span class="s2">&quot;NOT_SET&quot;</span>                                   <span class="c1"># OPTIONAL</span>
-    <span class="n">featuredArtifactType</span><span class="p">:</span> <span class="s2">&quot;Server&quot;</span>                          <span class="c1"># OPTIONAL</span>
-    <span class="n">thankYouTimeout</span><span class="p">:</span> <span class="mi">5</span>                                      <span class="c1"># OPTIONAL</span>
-
-<span class="c1"># YAML file formats for Version</span>
-<span class="o">-</span> <span class="nb">type</span><span class="p">:</span> <span class="n">product_version</span>                                     <span class="c1"># MANDATORY</span>
-  <span class="n">state</span><span class="p">:</span> <span class="n">create</span>                                             <span class="c1"># MANDATORY</span>
-  <span class="n">metadata</span><span class="p">:</span>
-    <span class="n">productName</span><span class="p">:</span> <span class="s2">&quot;Test Product&quot;</span>                             <span class="c1"># MANDATORY</span>
-    <span class="n">productCode</span><span class="p">:</span> <span class="s2">&quot;TestProduct&quot;</span>                              <span class="c1"># MANDATORY</span>
-    <span class="n">versionName</span><span class="p">:</span> <span class="s2">&quot;TestProductVersion&quot;</span>                       <span class="c1"># MANDATORY</span>
-    <span class="n">ga</span><span class="p">:</span> <span class="n">true</span>                                                <span class="c1"># OPTIONAL</span>
-    <span class="n">masterProductVersion</span><span class="p">:</span> <span class="n">null</span>                              <span class="c1"># OPTIONAL</span>
-    <span class="n">termsAndConditions</span><span class="p">:</span> <span class="s2">&quot;Anonymous Download&quot;</span>                <span class="c1"># MANDATORY</span>
-    <span class="n">trackingDisabled</span><span class="p">:</span> <span class="n">true</span>                                  <span class="c1"># OPTIONAL</span>
-    <span class="n">hidden</span><span class="p">:</span> <span class="n">true</span>                                            <span class="c1"># OPTIONAL</span>
-    <span class="n">invisible</span><span class="p">:</span> <span class="n">true</span>                                         <span class="c1"># OPTIONAL</span>
-
-<span class="c1"># YAML file formats for File</span>
-<span class="o">-</span> <span class="nb">type</span><span class="p">:</span> <span class="n">file</span>                                                <span class="c1"># MANDATORY</span>
-  <span class="n">state</span><span class="p">:</span> <span class="n">create</span>                                             <span class="c1"># MANDATORY</span>
-  <span class="n">metadata</span><span class="p">:</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="s2">&quot;FILE&quot;</span>                                            <span class="c1"># MANDATORY</span>
-    <span class="n">productName</span><span class="p">:</span> <span class="s2">&quot;Test Product&quot;</span>                             <span class="c1"># MANDATORY</span>
-    <span class="n">productCode</span><span class="p">:</span> <span class="s2">&quot;TestProduct&quot;</span>                              <span class="c1"># MANDATORY</span>
-    <span class="n">productVersionName</span><span class="p">:</span> <span class="s2">&quot;TestProductVersion&quot;</span>                <span class="c1"># MANDATORY</span>
-    <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;Test description&quot;</span>                         <span class="c1"># MANDATORY</span>
-    <span class="n">label</span><span class="p">:</span> <span class="s2">&quot;Release Info&quot;</span>                                   <span class="c1"># MANDATORY</span>
-    <span class="n">order</span><span class="p">:</span> <span class="mi">0</span>                                                <span class="c1"># OPTIONAL</span>
-    <span class="n">hidden</span><span class="p">:</span> <span class="n">false</span>                                           <span class="c1"># OPTIONAL</span>
-    <span class="n">downloadURL</span><span class="p">:</span> <span class="s2">&quot;/content/origin/files/TestProduct/&quot;</span>       <span class="c1"># MANDATORY</span>
-    <span class="n">shortURL</span><span class="p">:</span> <span class="s2">&quot;/test-1/example-v4/testing/&quot;</span>                 <span class="c1"># MANDATORY</span>
-    <span class="n">differentProductThankYouPage</span><span class="p">:</span> <span class="s2">&quot;Any Thank You Page&quot;</span>      <span class="c1"># OPTIONAL</span>
-
-<span class="o">...</span> <span class="c1"># many other records</span>
-</pre></div>
-</div>
-<p>To know more content gateway operations about add, update and delete please visit <a class="reference internal" href="push_base.html"><span class="doc">Push Base Module</span></a>.</p>
-</div>
+The YAML file can consist details of Products, Versions and Files. Please refer <a class="reference internal" href="entrypoints_reference.html#yaml-format"><span class="std std-ref">YAML file entities formats</span></a> for more details.</p>
 </div>
 </div>
 

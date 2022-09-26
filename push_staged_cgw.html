@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -76,7 +77,7 @@
              
   <div class="section" id="push-staged-cgw-module">
 <h1>Push Staged CGW Module<a class="headerlink" href="#push-staged-cgw-module" title="Permalink to this heading"></a></h1>
-<p>The push-staged-cgw (<a class="reference internal" href="#"><span class="doc">Push Staged CGW Module</span></a>) is a target entrypoint for Push Staged which will be invoked through Red Hat’s internal service called <cite>rcm-pub</cite>.</p>
+<p>The push-staged-cgw is a target entrypoint for Push Staged which will be invoked through Red Hat’s internal service called <cite>rcm-pub</cite>.</p>
 <p>All the user credentials will be received through the argument <code class="docutils literal notranslate"><span class="pre">target_settings</span></code> consisting of <cite>server_name</cite>, <cite>username</cite> and <cite>password</cite>.
 It shares the same YAML file structure except <cite>downloadURL</cite> user need to pass <cite>pushItemPath</cite>.</p>
 <div class="section" id="yaml-file-formats">
